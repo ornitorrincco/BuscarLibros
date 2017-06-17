@@ -18,21 +18,21 @@
       </form>
       <table class="table mgt-20" ng-if="data.elements.length > 0">
         <thead>
-          <th>Título</th>
-          <th>Autor</th>
+          <th style="width: 50%">Título</th>
+          <th style="width: 25%">Autor</th>
           <th>Librería</th>
           <th>Precio</th>
         </thead>
         <tbody>
-          <tr ng-repeat="element in data.elements">
+          <tr ng-repeat="element in data.elements | orderBy:'price'">
             <td>{{element.title}}</td>
             <td>{{element.author}}</td>
             <td>{{element.library}}</td>
-            <td>{{element.price}}</td>
+            <td>{{element.price !== -1 ? '$ ' + element.price : ''}}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <script type="text/javascript" src="assets/js/app.js"></script>
+    <script type="text/javascript" src="assets/js/app.min.js"></script>
   </body>
 </html>

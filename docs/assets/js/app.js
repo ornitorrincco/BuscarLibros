@@ -77,45 +77,121 @@ var qp = function(params) {
 // APP
 var indexApp = angular.module('indexApp', []);
 
-indexApp.service('indexService', ['$http', function($http){
+indexApp.service('indexService', ['$http', '$q', function($http, $q){
+  this.getElPendulo = function(queryParams){
+    return $q(function(resolve, reject){
+      var API = 'http://localhost:8000/BuscarLibros/ElPendulo';
+      $http.get(API + qp(queryParams || {})).then(function(response){
+        if (response.status == httpStatus.HTTP_200_OK){
+          var elements = [];
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(response.data, "text/html");
+          var items = doc.querySelectorAll('div.articulo_resultado');
+          var name, price, author, library;
+          for (var j = 0, len = items.length; j < len; j++){
+              name = items[j].querySelector('h4').textContent;
+              price = items[j].querySelector('div.der_articuloResultados>p>span>span:first-of-type');
+              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              author = items[j].querySelector('div.der_articuloResultados>ul>li:first-of-type>a');
+              author = author ? author.textContent : "";
+              elements.push({
+                title: name,
+                price: price,
+                author: author,
+                library: "El Péndulo"
+              });
+          }
+          resolve( elements.slice(0,15) );
+        }
+      }, function(response){
+        reject( 'Error al comunicar con El Péndulo' );
+      });
+    });
+  };
   this.getGandhi = function(queryParams){
-    var API = 'http://localhost:8000/Gandhi';
-    return $http.get(API + qp(queryParams || {}))
-  }
+    return $q(function(resolve, reject){
+      var API = 'http://localhost:8000/BuscarLibros/Gandhi';
+      $http.get(API + qp(queryParams || {})).then(function(response){
+        if (response.status == httpStatus.HTTP_200_OK){
+          var elements = [];
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(response.data, "text/html");
+          var items = doc.querySelectorAll('li.item');
+          var name, price, author, library;
+          for (var j = 0, len = items.length; j < len; j++){
+              name = items[j].querySelector('h2>a').textContent;
+              price = items[j].querySelector('p.special-price>span.price');
+              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              author = items[j].querySelector('h3>a');
+              author = author ? author.textContent : "";
+              elements.push({
+                title: name,
+                price: price,
+                author: author,
+                library: "Gandhi"
+              });
+          }
+          resolve( elements.slice(0,15) );
+        }
+      }, function(response){
+        reject( 'Error al comunicar con Gandhi' );
+      });
+    });
+  };
+  this.getElSotano = function(queryParams){
+    return $q(function(resolve, reject){
+      var API = 'http://localhost:8000/BuscarLibros/ElSotano';
+      $http.get(API + qp(queryParams || {})).then(function(response){
+        if (response.status === httpStatus.HTTP_200_OK){
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(response.data, "text/html");
+          var items = doc.querySelectorAll('figure');
+          var elements = [];
+          var name, price, author, library;
+          for (var j = 0, len = items.length; j < len; j++){
+              name = items[j].querySelector('p.susTit').textContent;
+              price = items[j].querySelector('span.subTit1');
+              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              author = items[j].querySelector('p.subTitulo');
+              author = author ? author.textContent : "";
+              elements.push({
+                title: name,
+                price: price,
+                author: author,
+                library: "El Sotano"
+              });
+          }
+          resolve( elements.slice(0,15) );
+        }
+      }, function(response){
+        reject( 'Error al comunicar con El Sotano' );
+      });
+    });
+  };
 }]);
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
   $scope.data = {};
   $scope.data.elements = [];
   $scope.search = function(){
+    $scope.data.elements = [];
     var queryParams = {
       q: $scope.data.search.replace(/ /g, "+").normalize('NFD').replace(/[\u0300-\u036f]/g, "")
     };
-    indexService.getGandhi(queryParams).then(function(response){
-      if (response.status == httpStatus.HTTP_200_OK){
-        $scope.data.elements = [];
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(response.data, "text/html");
-        var items = doc.querySelectorAll('li.item');
-        var name, price, author, library;
-        for (var j = 0, len = items.length; j < len; j++){
-            name = items[j].querySelector('h2>a').textContent;
-            while ($scope.data.elements.indexOf(name) !== -1){
-              name += '-';
-            }
-            price = items[j].querySelector('p.special-price>span.price');
-            price = price ? price.textContent : "";
-            author = items[j].querySelector('h3>a');
-            author = author ? author.textContent : "";
-            $scope.data.elements.push({
-              title: name,
-              price: price,
-              author: author,
-              library: "Gandhi"
-            });
-        }
-        $scope.data.elements = $scope.data.elements.slice(0,20)
-      }
-    });
+    indexService.getGandhi(queryParams)
+      .then(
+        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        (response) => console.log(response)
+      );
+    indexService.getElPendulo(queryParams)
+      .then(
+        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        (response) => console.log(response)
+      );
+    indexService.getElSotano(queryParams)
+      .then(
+        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        (response) => console.log(response)
+      );
   };
 }]);
