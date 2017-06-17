@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Comparar precios de libros</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script type="text/javascript" src="assets/js/angular.min.js"></script>
+  </head>
+  <body ng-app="indexApp" ng-controller="indexController">
+    <div class="container">
+      <h1>Comparar precios de libros</h1>
+      <form class="form-inline" ng-submit="search()">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Búsqueda" ng-model="data.search">
+          <button type="submit" class="form-control" name="button">Buscar</button>
+        </div>
+      </form>
+      <table class="table mgt-20" ng-if="data.elements.length > 0">
+        <thead>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Librería</th>
+          <th>Precio</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="element in data.elements">
+            <td>{{element.title}}</td>
+            <td>{{element.author}}</td>
+            <td>{{element.library}}</td>
+            <td>{{element.price}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script type="text/javascript" src="assets/js/app.js"></script>
+  </body>
+</html>
