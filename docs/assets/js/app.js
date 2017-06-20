@@ -78,93 +78,33 @@ var qp = function(params) {
 var indexApp = angular.module('indexApp', []);
 
 indexApp.service('indexService', ['$http', '$q', function($http, $q){
-  this.getElPendulo = function(queryParams){
+  this.getInfo = function(queryParams, s){
     return $q(function(resolve, reject){
-      var API = 'http://localhost:8000/BuscarLibros/ElPendulo';
+      var API = s.API;
       $http.get(API + qp(queryParams || {})).then(function(response){
         if (response.status == httpStatus.HTTP_200_OK){
           var elements = [];
           var parser = new DOMParser();
           var doc = parser.parseFromString(response.data, "text/html");
-          var items = doc.querySelectorAll('div.articulo_resultado');
+          var items = doc.querySelectorAll(s.items);
           var name, price, author, library;
           for (var j = 0, len = items.length; j < len; j++){
-              name = items[j].querySelector('h4').textContent;
-              price = items[j].querySelector('div.der_articuloResultados>p>span>span:first-of-type');
+              name = items[j].querySelector(s.name).textContent;
+              price = items[j].querySelector(s.price);
               price = price ? +price.textContent.replace(/[^0-9]/g, "") : -1;
-              author = items[j].querySelector('div.der_articuloResultados>ul>li:first-of-type>a');
+              author = items[j].querySelector(s.author);
               author = author ? author.textContent : "";
               elements.push({
                 title: name,
                 price: price,
                 author: author,
-                library: "El Péndulo"
+                library: s.library
               });
           }
           resolve( elements.slice(0,15) );
         }
       }, function(response){
-        reject( 'Error al comunicar con El Péndulo' );
-      });
-    });
-  };
-  this.getGandhi = function(queryParams){
-    return $q(function(resolve, reject){
-      var API = 'http://localhost:8000/BuscarLibros/Gandhi';
-      $http.get(API + qp(queryParams || {})).then(function(response){
-        if (response.status == httpStatus.HTTP_200_OK){
-          var elements = [];
-          var parser = new DOMParser();
-          var doc = parser.parseFromString(response.data, "text/html");
-          var items = doc.querySelectorAll('li.item');
-          var name, price, author, library;
-          for (var j = 0, len = items.length; j < len; j++){
-              name = items[j].querySelector('h2>a').textContent;
-              price = items[j].querySelector('p.special-price>span.price');
-              price = price ? +price.textContent.replace(/[^0-9]/g, "") : -1;
-              author = items[j].querySelector('h3>a');
-              author = author ? author.textContent : "";
-              elements.push({
-                title: name,
-                price: price,
-                author: author,
-                library: "Gandhi"
-              });
-          }
-          resolve( elements.slice(0,15) );
-        }
-      }, function(response){
-        reject( 'Error al comunicar con Gandhi' );
-      });
-    });
-  };
-  this.getElSotano = function(queryParams){
-    return $q(function(resolve, reject){
-      var API = 'http://localhost:8000/BuscarLibros/ElSotano';
-      $http.get(API + qp(queryParams || {})).then(function(response){
-        if (response.status === httpStatus.HTTP_200_OK){
-          var parser = new DOMParser();
-          var doc = parser.parseFromString(response.data, "text/html");
-          var items = doc.querySelectorAll('figure');
-          var elements = [];
-          var name, price, author, library;
-          for (var j = 0, len = items.length; j < len; j++){
-              name = items[j].querySelector('p.susTit').textContent;
-              price = items[j].querySelector('span.subTit1');
-              price = price ? +price.textContent.replace(/[^0-9\.]/g, "") : -1;
-              author = items[j].querySelector('p.subTitulo');
-              author = author ? author.textContent : "";
-              elements.push({
-                title: name,
-                price: price,
-                author: author,
-                library: "El Sotano"
-              });
-          }
-          resolve( elements.slice(0,15) );
-        }
-      }, function(response){
-        reject( 'Error al comunicar con El Sotano' );
+        reject( 'Error al comunicar con ' + s.library );
       });
     });
   };
@@ -176,20 +116,62 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
   $scope.data.orderBy = "price"
   $scope.search = function(){
     $scope.data.elements = [];
+    var selector;
     var queryParams = {
       q: $scope.data.search.replace(/ /g, "+").normalize('NFD').replace(/[\u0300-\u036f]/g, "")
     };
-    indexService.getGandhi(queryParams)
+    // Gandhi
+    selector = {
+      API: 'http://localhost:8000/BuscarLibros/Gandhi',
+      items: 'li.item',
+      name: 'h2>a',
+      price: 'p.special-price>span.price',
+      author: 'h3>a',
+      library: 'Gandhi'
+    };
+    indexService.getInfo(queryParams, selector)
       .then(
         (response) => $scope.data.elements = $scope.data.elements.concat(response),
         (response) => console.log(response)
       );
-    indexService.getElPendulo(queryParams)
+    // El Péndulo
+    selector = {
+      API: 'http://localhost:8000/BuscarLibros/ElPendulo',
+      items: 'div.articulo_resultado',
+      name: 'h4',
+      price: 'div.der_articuloResultados>p>span>span:first-of-type',
+      author: 'div.der_articuloResultados>ul>li:first-of-type>a',
+      library: 'El Péndulo'
+    };
+    indexService.getInfo(queryParams, selector)
       .then(
         (response) => $scope.data.elements = $scope.data.elements.concat(response),
         (response) => console.log(response)
       );
-    indexService.getElSotano(queryParams)
+    // El Sótano
+    selector = {
+      API: 'http://localhost:8000/BuscarLibros/ElSotano',
+      items: 'figure',
+      name: 'p.susTit',
+      price: 'span.subTit1',
+      author: 'p.subTitulo',
+      library: 'El Sótano'
+    };
+    indexService.getInfo(queryParams, selector)
+      .then(
+        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        (response) => console.log(response)
+      );
+    // Fondo de Cultura Económica
+    selector = {
+      API: 'http://localhost:8000/BuscarLibros/FCE',
+      items: 'div.row.spacer',
+      name: 'span.text-titulo',
+      price: 'span.text-precio',
+      author: 'span.text-autor',
+      library: 'FCE'
+    };
+    indexService.getInfo(queryParams, selector)
       .then(
         (response) => $scope.data.elements = $scope.data.elements.concat(response),
         (response) => console.log(response)
