@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.views import View
 import urllib.request
+import re
 
 class GandhiAPIView(View):
     def get(self, request):
@@ -9,6 +10,7 @@ class GandhiAPIView(View):
             return HttpResponse('queryParams missing or wrong').status_code(400) # bad request
         url += '?q=' + request.GET.get('q')
         url += '&common_filter%5B400%5D=448%7C568' # only books filter
+        url = re.sub(r"\s+", '+', url)
         url.encode('utf-8')
         response = urllib.request.urlopen(url)
         if response.status != 200:
@@ -23,6 +25,7 @@ class ElSotanoAPIView(View):
         url += '?q=' + request.GET.get('q')
         url += '&c=1' # only books filter
         url.encode('utf-8')
+        url = re.sub(r"\s+", '+', url)
         response = urllib.request.urlopen(url)
         if response.status != 200:
             return HttpResponse("El Sotano didn't ansered 200 OK").status_code(400) # bad request
@@ -36,6 +39,7 @@ class ElPenduloAPIView(View):
         url += '?idFormato=6' # only books filter
         url += '&search_string=' + request.GET.get('q')
         url.encode('utf-8')
+        url = re.sub(r"\s+", '+', url)
         response = urllib.request.urlopen(url)
         if response.status != 200:
             return HttpResponse("El Pendulo didn't ansered 200 OK").status_code(400) # bad request

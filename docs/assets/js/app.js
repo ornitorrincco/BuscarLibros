@@ -91,7 +91,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
           for (var j = 0, len = items.length; j < len; j++){
               name = items[j].querySelector('h4').textContent;
               price = items[j].querySelector('div.der_articuloResultados>p>span>span:first-of-type');
-              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              price = price ? +price.textContent.replace(/[^0-9]/g, "") : -1;
               author = items[j].querySelector('div.der_articuloResultados>ul>li:first-of-type>a');
               author = author ? author.textContent : "";
               elements.push({
@@ -121,7 +121,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
           for (var j = 0, len = items.length; j < len; j++){
               name = items[j].querySelector('h2>a').textContent;
               price = items[j].querySelector('p.special-price>span.price');
-              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              price = price ? +price.textContent.replace(/[^0-9]/g, "") : -1;
               author = items[j].querySelector('h3>a');
               author = author ? author.textContent : "";
               elements.push({
@@ -151,7 +151,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
           for (var j = 0, len = items.length; j < len; j++){
               name = items[j].querySelector('p.susTit').textContent;
               price = items[j].querySelector('span.subTit1');
-              price = price ? +price.textContent.match(/[0-9]+/)[0] : -1;
+              price = price ? +price.textContent.replace(/[^0-9\.]/g, "") : -1;
               author = items[j].querySelector('p.subTitulo');
               author = author ? author.textContent : "";
               elements.push({
@@ -173,6 +173,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
   $scope.data = {};
   $scope.data.elements = [];
+  $scope.data.orderBy = "price"
   $scope.search = function(){
     $scope.data.elements = [];
     var queryParams = {

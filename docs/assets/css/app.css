@@ -1,3 +1,51 @@
-.mgt-20 {
-  margin-top: 20px;
+html, body {
+  height: 100%;
+}
+.wrapper{
+  overflow: auto;
+}
+tr {
+  border-bottom: 1px solid #dcdcdc;
+}
+table {
+    width: 100%;
+    border-spacing: 0;
+}
+
+thead, tbody, tr, th, td {
+  display: block;
+}
+
+thead tr {
+    /* fallback */
+    width: 97%;
+    /* minus scroll bar width */
+    width: -webkit-calc(100% - 16px);
+    width:    -moz-calc(100% - 16px);
+    width:         calc(100% - 16px);
+}
+
+tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+tbody {
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tr td, tr th {
+    width: 19%;
+    float: left;
+}
+tr td:first-of-type, tr th:first-of-type {
+    width: 41%;
+    margin-top: 1.5rem;
+}
+.pointer{
+  cursor: pointer;
 }

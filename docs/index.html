@@ -3,36 +3,54 @@
   <head>
     <meta charset="utf-8">
     <title>Comparar precios de libros</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/concise.min.css">
+    <link rel="stylesheet" href="assets/css/concise-utils.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <script type="text/javascript" src="assets/js/angular.min.js"></script>
   </head>
-  <body ng-app="indexApp" ng-controller="indexController">
-    <div class="container">
-      <h1>Comparar precios de libros</h1>
-      <form class="form-inline" ng-submit="search()">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Búsqueda" ng-model="data.search">
-          <button type="submit" class="form-control" name="button">Buscar</button>
+  <body ng-app="indexApp" ng-controller="indexController" class="_bg-background-light">
+    <div class="wrapper">
+      <div container class="_mts">
+        <h1>Comparar precios de libros</h1>
+        <form ng-submit="search()">
+          <div grid class="_mbs">
+            <div column="4">
+              <input type="text" class="form-control" placeholder="Búsqueda" ng-model="data.search">
+            </div>
+            <div column="2">
+              <button type="submit" class="form-control" name="button">Buscar</button>
+            </div>
+          </div>
+        </form>
+        <div class="scrollable">
+          <table class="table _mbm" ng-if="data.elements.length > 0">
+            <thead>
+              <th ng-click="data.orderBy = data.orderBy === 'title' ? '-title' : 'title'" class="pointer">Título
+                <i ng-class="data.orderBy === 'title' ? 'fa fa-sort-asc' : data.orderBy === '-title' ? 'fa fa-sort-desc' : ''"></i>
+              </th>
+              <th ng-click="data.orderBy = data.orderBy === 'author' ? '-author' : 'author'" class="pointer">Autor
+                <i ng-class="data.orderBy === 'author' ? 'fa fa-sort-asc' : data.orderBy === '-author' ? 'fa fa-sort-desc' : ''"></i>
+              </th>
+              <th ng-click="data.orderBy = data.orderBy === 'library' ? '-library' : 'library'" class="pointer">Librería
+                <i ng-class="data.orderBy === 'library' ? 'fa fa-sort-asc' : data.orderBy === '-library' ? 'fa fa-sort-desc' : ''"></i>
+              </th>
+              <th ng-click="data.orderBy = data.orderBy === 'price' ? '-price' : 'price'" class="pointer">Precio
+                <i ng-class="data.orderBy === 'price' ? 'fa fa-sort-asc' : data.orderBy === '-price' ? 'fa fa-sort-desc' : ''"></i>
+              </th>
+            </thead>
+            <tbody>
+              <tr ng-repeat="element in data.elements | orderBy:data.orderBy">
+                <td class="_c-base-primary">{{element.title}}</td>
+                <td>{{element.author}}</td>
+                <td>{{element.library}}</td>
+                <td>{{element.price !== -1 ? element.price : '' | currency}}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </form>
-      <table class="table mgt-20" ng-if="data.elements.length > 0">
-        <thead>
-          <th style="width: 50%">Título</th>
-          <th style="width: 25%">Autor</th>
-          <th>Librería</th>
-          <th>Precio</th>
-        </thead>
-        <tbody>
-          <tr ng-repeat="element in data.elements | orderBy:'price'">
-            <td>{{element.title}}</td>
-            <td>{{element.author}}</td>
-            <td>{{element.library}}</td>
-            <td>{{element.price !== -1 ? '$ ' + element.price : ''}}</td>
-          </tr>
-        </tbody>
-      </table>
+      </div>
     </div>
-    <script type="text/javascript" src="assets/js/app.min.js"></script>
+    <script type="text/javascript" src="assets/js/app.js"></script>
   </body>
 </html>
