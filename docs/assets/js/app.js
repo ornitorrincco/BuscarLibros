@@ -125,6 +125,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
   $scope.data.elements = [];
   $scope.data.orderBy = "price"
   $scope.search = function(){
+    if (0 < $scope.done && $scope.done < $scope.total) return;
     $scope.total = 4;
     $scope.done = 0;
     document.querySelector('span.progress').style.width = '5%';
