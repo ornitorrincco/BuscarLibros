@@ -116,7 +116,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 }]);
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
-  var API = 'http://localhost:8000/BuscarLibros'
+  var API = 'https://showsmedata.com/BuscarLibros'
   $scope.data = {};
   $scope.data.elements = [];
   $scope.data.orderBy = "price"
