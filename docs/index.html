@@ -12,15 +12,33 @@
   </head>
   <body ng-app="indexApp" ng-controller="indexController" class="_bg-background-light">
     <div class="wrapper">
-      <div container class="_mts">
-        <h1>Comparar precios de libros</h1>
+      <div container class="_mtm">
+        <h1>Compara precios de libros</h1>
+        <section class="alert-box">
+          <p>Actualmente, los libros se buscan en <span class="_c-base-primary">Gandhi, El Sótano, El Péndulo y el Fondo de Cultura Económica</span>. El precio
+            es el reportado por las librerías en su sitio oficial, y en algunos casos
+            (especialmente en la FCE) puede que los libros enlistados no estén disponibles. El tiempo de carga
+            por consulta depende en gran parte de la velocidad de respuesta de
+            las librerías. Un click en el título redirige a la página del producto. Puedes cambiar dando click en los encabezados de la tabla.
+          </p>
+          <p>
+            Como parte del desarrollo del proyecto, se agregarán nuevas librerías de consulta, la posibilidad de seleccionar
+            sólo algunas librerías en la búsqueda y una herramienta para guardar y construir cotizaciones de varios libros a la vez,
+            así como incluir el precio estimado de envío según las opciones elegidas.
+          </p>
+          <p>Colabora al desarrollo de este proyecto en <a target="_blank" href="https://github.com/wallee94/BuscarLibros">Github  <i class="fa fa-github"></i></a>
+          </p>
+        </section>
         <form ng-submit="search()">
           <div grid class="_mbs">
             <div column="4">
-              <input type="text" class="form-control" placeholder="Búsqueda" ng-model="data.search">
+              <input type="text" placeholder="Búsqueda (autor, título)" ng-model="data.search">
             </div>
             <div column="2">
-              <button type="submit" class="form-control" name="button">Buscar</button>
+              <button type="submit" name="button">Buscar</button>
+            </div>
+            <div column="3 +3">
+              <input type="text" placeholder="Filtrar" ng-model="filter">
             </div>
           </div>
         </form>
@@ -44,7 +62,7 @@
               </th>
             </thead>
             <tbody>
-              <tr ng-repeat="element in data.elements | orderBy:data.orderBy">
+              <tr ng-repeat="element in data.elements | orderBy:data.orderBy | filter:filter">
                 <td class="_c-base-primary"><a target="_blank" href="{{element.site + element.reference}}">{{element.title}}</a></td>
                 <td>{{element.author}}</td>
                 <td>{{element.library}}</td>

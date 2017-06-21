@@ -127,6 +127,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
   $scope.search = function(){
     $scope.total = 4;
     $scope.done = 0;
+    document.querySelector('span.progress').style.width = '5%';
     $scope.data.elements = [];
     var selector;
     var queryParams = {
