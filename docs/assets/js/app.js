@@ -89,13 +89,14 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
           var items = doc.querySelectorAll(s.items);
           var name, price, author, library;
           for (var j = 0, len = items.length; j < len; j++){
-              name = items[j].querySelector(s.name).textContent;
+              name = items[j].querySelector(s.name).textContent.split('\n')[0];
               price = items[j].querySelector(s.price);
               price = price ? +price.textContent.replace(/[^0-9.]/g, "") : -1;
               author = items[j].querySelector(s.author);
               author = author ? author.textContent : "";
               reference = items[j].querySelector(s.ref).getAttribute("href");
-              if (/\/\//.test(reference)){s.site = "http:"} // for Gandhi
+              if (/https:\/\//.test(reference)){s.site = ""} // for Porrua
+              else if (/\/\//.test(reference)){s.site = "http:"} // for Gandhi
               else if (/\//.test(reference)){reference = reference.substring(1,reference.length)}
               reference = reference.replace('DetalleEd', 'Detalle') // for FCE
               elements.push({
@@ -118,7 +119,8 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
   var API = 'https://showsmedata.com/BuscarLibros';
-  $scope.total = 4;
+  // var API = 'http://localhost:8000/BuscarLibros';
+  $scope.total = 5;
   $scope.done = 0;
   document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
   $scope.data = {};
@@ -203,6 +205,26 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
       author: 'span.text-autor',
       library: 'FCE',
       ref: 'div.row.spacer>div.col-md-2>a',
+      site: 'https://elfondoenlinea.com/'
+    };
+    indexService.getInfo(queryParams, selector)
+      .then(
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
+        (response) => console.log(response)
+      );
+    // Porrua
+    selector = {
+      API: API + '/Porrua',
+      items: 'div.col-md-3.col-sm-4',
+      name: 'h5.titulo',
+      price: 'h5>strong',
+      author: 'h5>b>i>font',
+      library: 'Porrua',
+      ref: 'a',
       site: 'https://elfondoenlinea.com/'
     };
     indexService.getInfo(queryParams, selector)

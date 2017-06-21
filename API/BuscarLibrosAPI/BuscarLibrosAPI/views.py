@@ -46,6 +46,19 @@ class ElPenduloAPIView(View):
             return HttpResponse("El Pendulo didn't ansered 200 OK").status_code(400) # bad request
         return HttpResponse(response.read())
 
+class PorruaAPIView(View):
+    def get(self, request):
+        url = 'https://www.porrua.mx/busqueda/todos/'
+        if len(request.GET) == 0 or 'q' not in request.GET:
+            return HttpResponse('queryParams missing or wrong').status_code(400) # bad request
+        url += request.GET.get('q') + '/todos/1/impreso'
+        url.encode('utf-8')
+        url = re.sub(r"\s+", '+', url)
+        response = urllib.request.urlopen(url)
+        if response.status != 200:
+            return HttpResponse("Porrua didn't ansered 200 OK").status_code(400) # bad request
+        return HttpResponse(response.read())
+
 class FCEAPIView(View):
     def get(self, request):
         url = 'https://www.fondodeculturaeconomica.com/ResultadoE.aspx'
