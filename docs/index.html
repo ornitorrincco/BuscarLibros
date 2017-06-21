@@ -5,6 +5,7 @@
     <title>Comparar precios de libros</title>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/concise.min.css">
+    <link rel="stylesheet" href="assets/css/concise-ui.min.css">
     <link rel="stylesheet" href="assets/css/concise-utils.min.css">
     <link rel="stylesheet" href="assets/css/app.css">
     <script type="text/javascript" src="assets/js/angular.min.js"></script>
@@ -23,6 +24,9 @@
             </div>
           </div>
         </form>
+        <div class="progress-bar -striped -animated" ng-hide="done === total">
+          <span class="progress" style="width: 70%"></span>
+        </div>
         <div class="scrollable">
           <table class="table _mbm" ng-if="data.elements.length > 0">
             <thead>

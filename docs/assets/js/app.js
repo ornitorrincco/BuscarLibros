@@ -97,6 +97,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
               reference = items[j].querySelector(s.ref).getAttribute("href");
               if (/\/\//.test(reference)){s.site = "http:"} // for Gandhi
               else if (/\//.test(reference)){reference = reference.substring(1,reference.length)}
+              reference = reference.replace('DetalleEd', 'Detalle') // for FCE
               elements.push({
                 title: name,
                 price: price,
@@ -116,11 +117,16 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 }]);
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
-  var API = 'https://showsmedata.com/BuscarLibros'
+  var API = 'https://showsmedata.com/BuscarLibros';
+  $scope.total = 4;
+  $scope.done = 0;
+  document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
   $scope.data = {};
   $scope.data.elements = [];
   $scope.data.orderBy = "price"
   $scope.search = function(){
+    $scope.total = 4;
+    $scope.done = 0;
     $scope.data.elements = [];
     var selector;
     var queryParams = {
@@ -139,7 +145,11 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
     };
     indexService.getInfo(queryParams, selector)
       .then(
-        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
         (response) => console.log(response)
       );
     // El Péndulo
@@ -155,7 +165,11 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
     };
     indexService.getInfo(queryParams, selector)
       .then(
-        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
         (response) => console.log(response)
       );
     // El Sótano
@@ -171,7 +185,11 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
     };
     indexService.getInfo(queryParams, selector)
       .then(
-        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
         (response) => console.log(response)
       );
     // Fondo de Cultura Económica
@@ -183,11 +201,15 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
       author: 'span.text-autor',
       library: 'FCE',
       ref: 'div.row.spacer>div.col-md-2>a',
-      site: 'https://www.fondodeculturaeconomica.com/'
+      site: 'https://elfondoenlinea.com/'
     };
     indexService.getInfo(queryParams, selector)
       .then(
-        (response) => $scope.data.elements = $scope.data.elements.concat(response),
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
         (response) => console.log(response)
       );
   };
