@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from .views import GandhiAPIView, ElSotanoAPIView, ElPenduloAPIView, FCEAPIView, PorruaAPIView
+from .views import (
+    GandhiAPIView,
+    ElSotanoAPIView,
+    ElPenduloAPIView,
+    FCEAPIView,
+    PorruaAPIView,
+    EducalAPIView
+)
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -24,4 +31,5 @@ urlpatterns = [
     url(r'^BuscarLibros/ElPendulo$', ElPenduloAPIView.as_view()),
     url(r'^BuscarLibros/FCE$', FCEAPIView.as_view()),
     url(r'^BuscarLibros/Porrua$', PorruaAPIView.as_view()),
+    url(r'^BuscarLibros/Educal$', EducalAPIView.as_view()),
 ]

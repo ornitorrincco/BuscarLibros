@@ -95,7 +95,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
               author = items[j].querySelector(s.author);
               author = author ? author.textContent : "";
               reference = items[j].querySelector(s.ref).getAttribute("href");
-              if (/https:\/\//.test(reference)){s.site = ""} // for Porrua
+              if (/http[s]{0,1}:\/\//.test(reference)){s.site = ""} // for Porrua and Educal
               else if (/\/\//.test(reference)){s.site = "http:"} // for Gandhi
               else if (/\//.test(reference)){reference = reference.substring(1,reference.length)}
               reference = reference.replace('DetalleEd', 'Detalle') // for FCE
@@ -119,16 +119,24 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
   var API = 'https://showsmedata.com/BuscarLibros';
-  // var API = 'http://localhost:8000/BuscarLibros';
-  $scope.total = 5;
+  // var API = 'http://localhost:9002/BuscarLibros';
+  // var lis = document.querySelectorAll('li');
+  // for (var j = 0, len = lis.length; j < len; j++){
+  //   lis[j].addEventListener('click', function(){
+  //     this.classList.toggle('-active');
+  //     console.log('Done');
+  //   });
+  // }
+  $scope.total = 6;
   $scope.done = 0;
   document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
   $scope.data = {};
+  $scope.libraries = ['Gandhi','Porrua','FCE','El Pendulo','El Sotano','EDUCAL']
   $scope.data.elements = [];
   $scope.data.orderBy = "price"
   $scope.search = function(){
     if (0 < $scope.done && $scope.done < $scope.total) return;
-    $scope.total = 4;
+    $scope.total = 6;
     $scope.done = 0;
     document.querySelector('span.progress').style.width = '5%';
     $scope.data.elements = [];
@@ -154,7 +162,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
           $scope.data.elements = $scope.data.elements.concat(response)
           document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
         },
-        (response) => console.log(response)
+        (response) => console.log(response, $scope.done++)
       );
     // El Péndulo
     selector = {
@@ -174,7 +182,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
           $scope.data.elements = $scope.data.elements.concat(response)
           document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
         },
-        (response) => console.log(response)
+        (response) => console.log(response, $scope.done++)
       );
     // El Sótano
     selector = {
@@ -194,7 +202,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
           $scope.data.elements = $scope.data.elements.concat(response)
           document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
         },
-        (response) => console.log(response)
+        (response) => console.log(response, $scope.done++)
       );
     // Fondo de Cultura Económica
     selector = {
@@ -214,7 +222,7 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
           $scope.data.elements = $scope.data.elements.concat(response)
           document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
         },
-        (response) => console.log(response)
+        (response) => console.log(response, $scope.done++)
       );
     // Porrua
     selector = {
@@ -234,7 +242,27 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
           $scope.data.elements = $scope.data.elements.concat(response)
           document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
         },
-        (response) => console.log(response)
+        (response) => console.log(response, $scope.done++)
+      );
+    // EDUCAL
+    selector = {
+      API: API + '/Educal',
+      items: 'div.book-item.book-item-spaced',
+      name: 'div.title>div:first-of-type',
+      price: 'div.title>div.price',
+      author: 'div.title>div>span.italic',
+      library: 'EDUCAL',
+      ref: 'div.hover-item>div.top>a',
+      site: 'http://www.educal.com.mx'
+    };
+    indexService.getInfo(queryParams, selector)
+      .then(
+        function(response) {
+          $scope.done++;
+          $scope.data.elements = $scope.data.elements.concat(response)
+          document.querySelector('span.progress').style.width = $scope.done*100/$scope.total + '%';
+        },
+        (response) => console.log(response, $scope.done++)
       );
   };
 }]);

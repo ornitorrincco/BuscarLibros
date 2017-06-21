@@ -17,7 +17,7 @@
       <div container class="_mtm">
         <h1>Compara precios de libros</h1>
         <section class="alert-box">
-          <p>Actualmente, los libros se buscan en <span class="_c-base-primary">Gandhi, El Sótano, Porrua, El Péndulo y el Fondo de Cultura Económica</span>. El precio
+          <p>Actualmente, los libros se buscan en <span class="_c-base-primary">Gandhi, El Sótano, Porrua, El Péndulo, EDUCAL y el Fondo de Cultura Económica</span>. El precio
             es el reportado por las librerías en su sitio oficial, y en algunos casos
             (especialmente en la FCE) puede que los libros enlistados no estén disponibles. El tiempo de carga
             por consulta depende en gran parte de la velocidad de respuesta de
@@ -31,6 +31,9 @@
           <p>Colabora al desarrollo de este proyecto en <a target="_blank" href="https://github.com/wallee94/BuscarLibros">Github  <i class="fa fa-github"></i></a>
           </p>
         </section>
+         <ul class="button-group">
+          <li ng-repeat="library in libraries"><a class="item">{{library}}</a></li>
+        </ul>
         <form ng-submit="search()">
           <div grid class="_mbs">
             <div column="4">
@@ -48,6 +51,7 @@
           <span class="progress" style="width: 70%"></span>
         </div>
         <div class="scrollable">
+          <span ng-show="done >= total">{{data.elements.length}} resultados encontrados</span>
           <table class="table _mbm" ng-if="data.elements.length > 0">
             <thead>
               <th ng-click="data.orderBy = data.orderBy === 'title' ? '-title' : 'title'" class="pointer">Título
@@ -64,11 +68,11 @@
               </th>
             </thead>
             <tbody>
-              <tr ng-repeat="element in data.elements | orderBy:data.orderBy | filter:filter">
+              <tr ng-repeat="element in data.elements | orderBy:data.orderBy | filter:filter" ng-if="element.price > 0">
                 <td class="_c-base-primary"><a target="_blank" href="{{element.site + element.reference}}">{{element.title}}</a></td>
                 <td>{{element.author}}</td>
                 <td>{{element.library}}</td>
-                <td>{{element.price !== -1 ? element.price : '' | currency}}</td>
+                <td>{{element.price | currency}}</td>
               </tr>
             </tbody>
           </table>

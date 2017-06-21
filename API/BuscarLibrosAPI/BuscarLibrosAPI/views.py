@@ -59,6 +59,19 @@ class PorruaAPIView(View):
             return HttpResponse("Porrua didn't ansered 200 OK").status_code(400) # bad request
         return HttpResponse(response.read())
 
+class EducalAPIView(View):
+    def get(self, request):
+        url = 'http://www.educal.com.mx/busca/fisico/'
+        if len(request.GET) == 0 or 'q' not in request.GET:
+            return HttpResponse('queryParams missing or wrong').status_code(400) # bad request
+        url += request.GET.get('q') + '/pagina1.html'
+        url.encode('utf-8')
+        url = re.sub(r"\s+", '_', url)
+        response = urllib.request.urlopen(url)
+        if response.status != 200:
+            return HttpResponse("Educal didn't ansered 200 OK").status_code(400) # bad request
+        return HttpResponse(response.read())
+
 class FCEAPIView(View):
     def get(self, request):
         url = 'https://www.fondodeculturaeconomica.com/ResultadoE.aspx'
