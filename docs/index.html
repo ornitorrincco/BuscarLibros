@@ -41,7 +41,7 @@
             </thead>
             <tbody>
               <tr ng-repeat="element in data.elements | orderBy:data.orderBy">
-                <td class="_c-base-primary">{{element.title}}</td>
+                <td class="_c-base-primary"><a target="_blank" href="{{element.site + element.reference}}">{{element.title}}</a></td>
                 <td>{{element.author}}</td>
                 <td>{{element.library}}</td>
                 <td>{{element.price !== -1 ? element.price : '' | currency}}</td>

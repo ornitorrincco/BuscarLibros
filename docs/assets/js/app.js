@@ -91,14 +91,19 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
           for (var j = 0, len = items.length; j < len; j++){
               name = items[j].querySelector(s.name).textContent;
               price = items[j].querySelector(s.price);
-              price = price ? +price.textContent.replace(/[^0-9]/g, "") : -1;
+              price = price ? +price.textContent.replace(/[^0-9.]/g, "") : -1;
               author = items[j].querySelector(s.author);
               author = author ? author.textContent : "";
+              reference = items[j].querySelector(s.ref).getAttribute("href");
+              if (/\/\//.test(reference)){s.site = "http:"} // for Gandhi
+              else if (/\//.test(reference)){reference = reference.substring(1,reference.length)}
               elements.push({
                 title: name,
                 price: price,
                 author: author,
-                library: s.library
+                library: s.library,
+                reference: reference,
+                site: s.site
               });
           }
           resolve( elements.slice(0,15) );
@@ -111,6 +116,7 @@ indexApp.service('indexService', ['$http', '$q', function($http, $q){
 }]);
 
 indexApp.controller('indexController', ['$scope', 'indexService', function($scope, indexService){
+  var API = 'http://localhost:8000/BuscarLibros'
   $scope.data = {};
   $scope.data.elements = [];
   $scope.data.orderBy = "price"
@@ -122,12 +128,14 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
     };
     // Gandhi
     selector = {
-      API: 'http://localhost:8000/BuscarLibros/Gandhi',
+      API: API + '/Gandhi',
       items: 'li.item',
       name: 'h2>a',
       price: 'p.special-price>span.price',
       author: 'h3>a',
-      library: 'Gandhi'
+      library: 'Gandhi',
+      ref: 'h2>a',
+      site: 'http://www.gandhi.com.mx/'
     };
     indexService.getInfo(queryParams, selector)
       .then(
@@ -136,12 +144,14 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
       );
     // El Péndulo
     selector = {
-      API: 'http://localhost:8000/BuscarLibros/ElPendulo',
+      API: API + '/ElPendulo',
       items: 'div.articulo_resultado',
       name: 'h4',
       price: 'div.der_articuloResultados>p>span>span:first-of-type',
       author: 'div.der_articuloResultados>ul>li:first-of-type>a',
-      library: 'El Péndulo'
+      library: 'El Péndulo',
+      ref: 'div.imagen_prodResultados>a',
+      site: 'https://pendulo.com/'
     };
     indexService.getInfo(queryParams, selector)
       .then(
@@ -150,12 +160,14 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
       );
     // El Sótano
     selector = {
-      API: 'http://localhost:8000/BuscarLibros/ElSotano',
+      API: API + '/ElSotano',
       items: 'figure',
       name: 'p.susTit',
       price: 'span.subTit1',
       author: 'p.subTitulo',
-      library: 'El Sótano'
+      library: 'El Sótano',
+      ref: 'figure>a',
+      site: 'https://www.elsotano.com/'
     };
     indexService.getInfo(queryParams, selector)
       .then(
@@ -164,12 +176,14 @@ indexApp.controller('indexController', ['$scope', 'indexService', function($scop
       );
     // Fondo de Cultura Económica
     selector = {
-      API: 'http://localhost:8000/BuscarLibros/FCE',
+      API: API + '/FCE',
       items: 'div.row.spacer',
       name: 'span.text-titulo',
       price: 'span.text-precio',
       author: 'span.text-autor',
-      library: 'FCE'
+      library: 'FCE',
+      ref: 'div.row.spacer>div.col-md-2>a',
+      site: 'https://www.fondodeculturaeconomica.com/'
     };
     indexService.getInfo(queryParams, selector)
       .then(
